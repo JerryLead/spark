@@ -130,7 +130,8 @@
     <hadoop.version>2.6.4</hadoop.version>
     <protobuf.version>2.5.0</protobuf.version>
     <yarn.version>${hadoop.version}</yarn.version>
-    <hbase.version>0.98.7-hadoop2</hbase.version>
+    <!--<hbase.version>0.98.7-hadoop2</hbase.version>-->
+    <hbase.version>1.1.1</hbase.version>
     <hbase.artifact>hbase</hbase.artifact>
     <flume.version>1.6.0</flume.version>
     <zookeeper.version>3.4.5</zookeeper.version>
