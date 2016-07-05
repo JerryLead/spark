@@ -87,7 +87,7 @@ private[spark] class ExecutorAllocationManager(
 
   // Lower and upper bounds on the number of executors.
   private val minNumExecutors = conf.getInt("spark.dynamicAllocation.minExecutors", 0)
-  private val maxNumExecutors = conf.getInt("spark.dynamicAllocation.maxExecutors",
+  private var maxNumExecutors = conf.getInt("spark.dynamicAllocation.maxExecutors",
     Integer.MAX_VALUE)
 
   // How long there must be backlogged tasks for before an addition is triggered (seconds)
@@ -200,6 +200,22 @@ private[spark] class ExecutorAllocationManager(
     }
     if (tasksPerExecutor == 0) {
       throw new SparkException("spark.executor.cores must not be less than spark.task.cpus.")
+    }
+  }
+
+  /**
+   * Determine the max number of executors when the first stage is submitted.
+   */
+  def setExecutorNum(numTasks: Int): Unit = {
+    if (minNumExecutors == 0 && maxNumExecutors == Integer.MAX_VALUE) {
+      val initialExecutorNum = (numTasks + tasksPerExecutor - 1) / tasksPerExecutor
+      if (numTasks <= 8) {
+        maxNumExecutors = initialExecutorNum * 2
+      } else if (numTasks <= 32) {
+        maxNumExecutors = initialExecutorNum * 2
+      } else {
+        maxNumExecutors = initialExecutorNum * 2
+      }
     }
   }
 
@@ -537,6 +553,11 @@ private[spark] class ExecutorAllocationManager(
       initializing = false
       val stageId = stageSubmitted.stageInfo.stageId
       val numTasks = stageSubmitted.stageInfo.numTasks
+
+      if (stageId == 0) {
+        allocationManager.setExecutorNum(numTasks)
+      }
+
       allocationManager.synchronized {
         stageIdToNumTasks(stageId) = numTasks
         allocationManager.onSchedulerBacklogged()
