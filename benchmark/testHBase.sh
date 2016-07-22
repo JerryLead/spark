@@ -2,9 +2,8 @@
 
 SPARK_HOME=~/spark-1.6.2-bin-hadoop2.7.1-dynamic
 SPARK_SUBMIT=$SPARK_HOME/bin/spark-submit
-ENV="--master yarn --deploy-mode client --executor-memory 4g --executor-cores 2 --queue default"
+ENV="--master yarn --deploy-mode client --executor-memory 4g --executor-cores 2 --queue default --driver-class-path /home/lijie/hbase-1.1.2/conf"
 JAR="$SPARK_HOME/lib/spark-examples*.jar"
-HBASE_CONF_DIR=~/hbase-1.1.2/conf
 
 START="============================================================================="
 MID="-------------------------------------------------------------------------------"
